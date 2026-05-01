@@ -46,8 +46,11 @@ export default function ProjectsSection() {
                                 dates={project.dates}
                                 tags={project.technologies}
                                 image={project.image}
-                                video={project.video}
-                                links={project.links}
+                                links={project.links?.map((l) => ({
+                                    icon: null,
+                                    type: l.title,
+                                    href: l.href,
+                                }))}
                             />
                         </BlurFade>
                     ))}
