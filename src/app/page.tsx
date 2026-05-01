@@ -27,9 +27,7 @@ export default function Page() {
   return (
     <main className="min-h-dvh flex flex-col gap-14 relative">
       {/* Subtle background effect */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        <Meteors number={8} />
-      </div>
+     
       
       <div className="relative z-10">
         <section id="hero">
@@ -51,16 +49,16 @@ export default function Page() {
                   text={DATA.description}
                 />
                 <BlurFade delay={BLUR_FADE_DELAY * 2}>
-                  <div className="flex gap-3 mt-4">
-                    <RainbowButton 
-                      onClick={() => setShowResume(true)}
-                      className="gap-2 text-sm"
-                    >
-                      <Sparkles className="h-4 w-4" />
-                      View Resume
-                    </RainbowButton>
-                  </div>
-                </BlurFade>
+  <div className="flex gap-3 mt-4">
+    <a href="/resume.pdf" download>
+      <RainbowButton className="gap-2 text-sm">
+        <Sparkles className="h-4 w-4" />
+        Download Resume
+      </RainbowButton>
+    </a>
+  </div>
+</BlurFade>
+                
               </div>
               <BlurFade delay={BLUR_FADE_DELAY} className="order-1 md:order-2">
                 <div className="relative">
@@ -75,7 +73,7 @@ export default function Page() {
           </div>
         </section>
 
-        <section id="about">
+        <section id="about" className="mt-10 mb-10">
           <div className="flex min-h-0 flex-col gap-y-4">
             <BlurFade delay={BLUR_FADE_DELAY * 3}>
               <h2 className="text-xl font-bold">
@@ -90,7 +88,7 @@ export default function Page() {
           </div>
         </section>
 
-        <section id="work">
+        <section id="work" className="mt-10 mb-10">
           <div className="flex min-h-0 flex-col gap-y-6">
             <BlurFade delay={BLUR_FADE_DELAY * 5}>
               <h2 className="text-xl font-bold">Work Experience</h2>
@@ -101,7 +99,7 @@ export default function Page() {
           </div>
         </section>
 
-        <section id="education">
+        <section id="education" className="mt-10 mb-10">
           <div className="flex min-h-0 flex-col gap-y-6">
             <BlurFade delay={BLUR_FADE_DELAY * 7}>
               <h2 className="text-xl font-bold">Education</h2>
