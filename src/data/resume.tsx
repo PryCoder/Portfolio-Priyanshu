@@ -61,21 +61,21 @@ export const DATA = {
     social: {
       GitHub: {
         name: "GitHub",
-        url: "https://dub.sh/dillion-github",
+        url: "https://github.com/PryCoder",
         icon: Icons.github,
         navbar: true,
       },
 
       LinkedIn: {
         name: "LinkedIn",
-        url: "https://dub.sh/dillion-linkedin",
+        url: "https://www.linkedin.com/in/priyanshu-gupta-664b30321",
         icon: Icons.linkedin,
 
         navbar: true,
       },
       X: {
         name: "X",
-        url: "https://dub.sh/dillion-twitter",
+        url: "https://x.com/PriyanshuG34",
         icon: Icons.x,
 
         navbar: true,
@@ -131,7 +131,7 @@ work : [
 ],projects: [
   {
     title: "EpicShot",
-    href: "",
+     href: "https://epicshot.onrender.com",
     dates: "2024",
     active: true,
     description:
@@ -155,7 +155,7 @@ work : [
 
   {
     title: "BetterShop",
-    href: "",
+     href: "https://bettershop-ecom.onrender.com",
     dates: "2024",
     active: true,
     description:
@@ -171,7 +171,7 @@ work : [
     links: [
       {
         title: "Live Demo",
-        href: "https://bettershop-ecom.onrender.com/",
+        href: "https://bettershop-ecom.onrender.com",
       },
     ],
     image: "/b.png",
@@ -179,7 +179,8 @@ work : [
 
   {
     title: "BookNerd",
-    href: "",
+   href: "https://booknerd.netlify.app/",
+      
     dates: "2024",
     active: true,
     description:
@@ -202,7 +203,7 @@ work : [
 
   {
     title: "RestoNow",
-    href: "",
+    href: "https://resto-gold-iota.vercel.app/",
     dates: "2024",
     active: true,
     description:
