@@ -142,16 +142,7 @@ export default function HackathonsSection() {
           </Timeline>
 
           {/* Call to Action with hover effect */}
-          <div className="mt-8 relative">
-            <div className="relative z-10 text-center py-8">
-              <ShimmerButton className="mx-auto">
-                <span className="flex items-center gap-2">
-                  🚀 View all hackathon experiences
-                  <span>→</span>
-                </span>
-              </ShimmerButton>
-            </div>
-          </div>
+     
         </div>
       </div>
     </section>
