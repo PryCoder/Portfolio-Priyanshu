@@ -20,6 +20,7 @@ import { RainbowButton } from "@/components/ui/rainbow-button";
 import { useState } from "react";
 import { TextFlippingBoard } from "@/components/ui/text-flipping-board";
 import { TextFlippingBoardDemo } from "@/components/section/flip";
+import { Highlighter } from "@/components/ui/highlighter";
 
 const BLUR_FADE_DELAY = 0.04;
 
@@ -84,9 +85,27 @@ export default function Page() {
               </h2>
             </BlurFade>
             <BlurFade delay={BLUR_FADE_DELAY * 4}>
-              <div className="prose max-w-full text-pretty font-sans leading-relaxed text-muted-foreground dark:prose-invert">
-                <Markdown>{DATA.summary}</Markdown>
-              </div>
+             <div className="prose max-w-full text-pretty font-sans leading-relaxed text-muted-foreground dark:prose-invert">
+  <p>
+    <Highlighter action="highlight" color="#00FF00">
+      Software Engineer
+    </Highlighter>{" "}
+    passionate about{" "}
+    <Highlighter action="underline" color="#FF9800">
+      Data Structures & Algorithms
+    </Highlighter>{" "}
+    with 167+ problems solved on LeetCode. Skilled in building{" "}
+    <Highlighter action="highlight" color="#87CEFA">
+      scalable full-stack applications
+    </Highlighter>{" "}
+    using React, Next.js, and Node.js. Active hackathon participant with
+    experience in creating{" "}
+    <Highlighter action="underline" color="#FF6B6B">
+      innovative solutions under pressure
+    </Highlighter>
+    .
+  </p>
+</div>
             </BlurFade>
           </div>
         </section>

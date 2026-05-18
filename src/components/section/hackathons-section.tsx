@@ -34,14 +34,14 @@ export default function HackathonsSection() {
             <div className="flex items-center w-full">
               <div className="flex-1 h-px bg-linear-to-r from-transparent from-5% via-primary/50 via-95% to-transparent" />
               <div className="border bg-primary/10 backdrop-blur-sm z-10 rounded-xl px-4 py-1 flex items-center gap-2">
-                <span className="text-primary text-sm font-medium">🏆</span>
+                <span className="text-primary text-sm font-medium">💻</span>
                 <span className="text-primary text-sm font-medium">Hackathons</span>
                 <span className="text-primary/60 text-xs">(</span>
                 <NumberTicker
                   value={totalHackathons}
                   className="text-primary text-sm font-bold"
                 />
-                <span className="text-primary/60 text-xs">+)</span>
+                <span className="text-primary/60 text-xs">)</span>
               </div>
               <div className="flex-1 h-px bg-linear-to-l from-transparent from-5% via-primary/50 via-95% to-transparent" />
             </div>
@@ -49,22 +49,22 @@ export default function HackathonsSection() {
             <div className="flex flex-col gap-y-3 items-center justify-center">
               <WordRotate
                 words={[
-                  "I like building things",
-                  "I love creating solutions",
-                  "I enjoy team collaboration",
-                  "I thrive under pressure",
+                  "Learning through building",
+                  "Growing with every challenge",
+                  "Collaboration is key",
+                  "Embracing the journey",
                 ]}
                 className="text-3xl font-bold tracking-tighter sm:text-4xl text-center"
               />
               <p className="text-muted-foreground md:text-lg/relaxed lg:text-base/relaxed xl:text-lg/relaxed text-balance text-center max-w-2xl">
-                During my time in university, I attended{" "}
+                During my time in university, I participated in{" "}
                 <span className="font-bold text-primary">
                   <NumberTicker value={totalHackathons} />
                 </span>{" "}
-                hackathons. People from around the country would come together and
-                build incredible things in 2-3 days. It was eye-opening to see the 
-                endless possibilities brought to life by a group of motivated and 
-                passionate individuals.
+                hackathons. It was an incredible experience collaborating with
+                talented people from around the country, learning to build
+                solutions under time pressure, and seeing how teamwork can bring
+                ideas to life.
               </p>
             </div>
           </div>
@@ -140,9 +140,6 @@ export default function HackathonsSection() {
               </TimelineItem>
             ))}
           </Timeline>
-
-          {/* Call to Action with hover effect */}
-     
         </div>
       </div>
     </section>
