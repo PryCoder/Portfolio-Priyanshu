@@ -32,7 +32,6 @@ export default function ContactPage() {
       ...prev,
       [e.target.name]: e.target.value,
     }));
-    // Clear error when user starts typing
     if (error) setError("");
   };
 
@@ -45,7 +44,6 @@ export default function ContactPage() {
       return;
     }
 
-    // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       setError("Please enter a valid email address");
@@ -55,7 +53,6 @@ export default function ContactPage() {
     setIsSubmitting(true);
 
     try {
-      // Use relative path for same-origin API
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: {
@@ -73,7 +70,6 @@ export default function ContactPage() {
           email: "",
           message: "",
         });
-        // Reset success message after 5 seconds
         setTimeout(() => setIsSubmitted(false), 5000);
       } else {
         setError(data?.message || "Failed to send message");
@@ -86,43 +82,45 @@ export default function ContactPage() {
     }
   };
 
-  // Don't render until mounted to avoid hydration issues
   if (!mounted) {
     return null;
   }
 
   return (
-    <div className="relative min-h-screen w-full">
+    <div className="relative min-h-screen w-full overflow-hidden">
       <AuroraBackground>
-        <div className="relative w-full">
+        <div className="relative w-full h-full overflow-y-auto overflow-x-hidden">
           <Meteors number={15} />
 
-          <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
-            {/* HEADER */}
+          <div className="relative z-10 container mx-auto px-4 sm:px-6 py-8 sm:py-12 md:py-16">
+            {/* HEADER SECTION */}
             <BlurFade delay={0.1} inView>
-              <div className="text-center mb-8 sm:mb-10 lg:mb-12">
-                <Sparkles className="mx-auto mb-2 sm:mb-3 text-primary h-6 w-6 sm:h-8 sm:w-8" />
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold px-4 dark:text-white">
+              <div className="text-center mb-8 sm:mb-10 md:mb-12">
+                <Sparkles className="mx-auto mb-2 sm:mb-3 text-primary h-5 w-5 sm:h-6 sm:w-6" />
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold px-4 dark:text-white">
                   Get In Touch
                 </h1>
-                <p className="text-muted-foreground mt-2 sm:mt-3 text-sm sm:text-base px-4">
+                <p className="text-muted-foreground mt-2 sm:mt-3 text-sm sm:text-base px-4 max-w-2xl mx-auto">
                   Let's build something amazing together
                 </p>
               </div>
             </BlurFade>
 
-            <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 max-w-7xl mx-auto">
-              {/* LEFT INFO - Contact Details */}
+            {/* MAIN GRID */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 max-w-6xl mx-auto">
+              
+              {/* LEFT SIDE - Contact Information */}
               <BlurFade delay={0.2} inView>
-                <div className="space-y-4 sm:space-y-5 lg:space-y-6">
+                <div className="space-y-4 md:space-y-5">
+                  
                   {/* Email Card */}
-                  <div className="p-4 sm:p-5 lg:p-6 border rounded-xl bg-card/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
-                    <div className="flex items-center gap-3 sm:gap-4">
-                      <div className="p-2 rounded-full bg-primary/10 shrink-0">
+                  <div className="group p-4 md:p-5 border rounded-xl bg-card/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300">
+                    <div className="flex items-center gap-3 md:gap-4">
+                      <div className="p-2 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors shrink-0">
                         <Mail className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="text-xs sm:text-sm text-muted-foreground">Email</p>
+                        <p className="text-xs text-muted-foreground mb-0.5">Email</p>
                         <p className="font-medium text-sm sm:text-base break-all dark:text-white">
                           priyanshugupta007007@gmail.com
                         </p>
@@ -131,56 +129,64 @@ export default function ContactPage() {
                   </div>
 
                   {/* Phone Card */}
-                  <div className="p-4 sm:p-5 lg:p-6 border rounded-xl bg-card/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
-                    <div className="flex items-center gap-3 sm:gap-4">
-                      <div className="p-2 rounded-full bg-primary/10 shrink-0">
+                  <div className="group p-4 md:p-5 border rounded-xl bg-card/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300">
+                    <div className="flex items-center gap-3 md:gap-4">
+                      <div className="p-2 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors shrink-0">
                         <Phone className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                       </div>
                       <div>
-                        <p className="text-xs sm:text-sm text-muted-foreground">Phone</p>
-                        <p className="font-medium text-sm sm:text-base dark:text-white">+91 93241 48255</p>
+                        <p className="text-xs text-muted-foreground mb-0.5">Phone</p>
+                        <p className="font-medium text-sm sm:text-base dark:text-white">
+                          +91 93241 48255
+                        </p>
                       </div>
                     </div>
                   </div>
 
                   {/* Location Card */}
-                  <div className="p-4 sm:p-5 lg:p-6 border rounded-xl bg-card/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
-                    <div className="flex items-center gap-3 sm:gap-4">
-                      <div className="p-2 rounded-full bg-primary/10 shrink-0">
+                  <div className="group p-4 md:p-5 border rounded-xl bg-card/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300">
+                    <div className="flex items-center gap-3 md:gap-4">
+                      <div className="p-2 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors shrink-0">
                         <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                       </div>
                       <div>
-                        <p className="text-xs sm:text-sm text-muted-foreground">Location</p>
-                        <p className="font-medium text-sm sm:text-base dark:text-white">Mumbai, India</p>
+                        <p className="text-xs text-muted-foreground mb-0.5">Location</p>
+                        <p className="font-medium text-sm sm:text-base dark:text-white">
+                          Mumbai, India
+                        </p>
                       </div>
                     </div>
                   </div>
                 </div>
               </BlurFade>
 
-              {/* RIGHT FORM */}
+              {/* RIGHT SIDE - Contact Form */}
               <BlurFade delay={0.3} inView>
-                <div className="p-5 sm:p-6 lg:p-8 border rounded-xl bg-card/80 backdrop-blur-sm">
+                <div className="p-5 md:p-6 border rounded-xl bg-card/80 backdrop-blur-sm">
                   {isSubmitted ? (
-                    <div className="text-center py-8 sm:py-10 lg:py-12">
-                      <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-green-100 dark:bg-green-900/20 mb-4">
-                        <CheckCircle className="h-7 w-7 sm:h-8 sm:w-8 text-green-500" />
+                    // Success Message
+                    <div className="text-center py-8 sm:py-10 md:py-12">
+                      <div className="inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-green-100 dark:bg-green-900/20 mb-3">
+                        <CheckCircle className="h-6 w-6 sm:h-7 sm:w-7 text-green-500" />
                       </div>
-                      <h2 className="text-xl sm:text-2xl font-semibold mt-2">
+                      <h2 className="text-xl sm:text-2xl font-semibold mt-2 dark:text-white">
                         Message Sent!
                       </h2>
-                      <p className="text-muted-foreground mt-2 text-sm sm:text-base px-4">
+                      <p className="text-muted-foreground mt-2 text-sm sm:text-base">
                         Thanks for reaching out. I'll get back to you soon!
                       </p>
                     </div>
                   ) : (
-                    <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
+                    // Contact Form
+                    <form onSubmit={handleSubmit} className="space-y-4 md:space-y-5">
+                      {/* Error Message */}
                       {error && (
-                        <div className="p-3 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-500 text-sm">
+                        <div className="p-3 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-500 text-sm border border-red-200 dark:border-red-800">
                           {error}
                         </div>
                       )}
                       
+                      {/* Name Field */}
                       <div>
                         <Input
                           name="name"
@@ -192,6 +198,7 @@ export default function ContactPage() {
                         />
                       </div>
 
+                      {/* Email Field */}
                       <div>
                         <Input
                           name="email"
@@ -204,11 +211,12 @@ export default function ContactPage() {
                         />
                       </div>
 
+                      {/* Message Field */}
                       <div>
                         <Textarea
                           name="message"
                           placeholder="Your Message"
-                          rows={6}
+                          rows={5}
                           value={formData.message}
                           onChange={handleChange}
                           disabled={isSubmitting}
@@ -216,12 +224,13 @@ export default function ContactPage() {
                         />
                       </div>
 
+                      {/* Submit Button */}
                       <RainbowButton
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full gap-2 text-sm sm:text-base py-2 sm:py-3"
+                        className="w-full gap-2 text-sm sm:text-base"
                       >
-                        <Send className="h-4 w-4" />
+                        <Send className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                         {isSubmitting ? "Sending..." : "Send Message"}
                       </RainbowButton>
                     </form>

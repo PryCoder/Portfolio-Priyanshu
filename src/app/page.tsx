@@ -18,6 +18,8 @@ import { AnimatedShinyText } from "@/components/ui/animated-shiny-text";
 import { Meteors } from "@/components/ui/meteors";
 import { RainbowButton } from "@/components/ui/rainbow-button";
 import { useState } from "react";
+import { TextFlippingBoard } from "@/components/ui/text-flipping-board";
+import { TextFlippingBoardDemo } from "@/components/section/flip";
 
 const BLUR_FADE_DELAY = 0.04;
 
@@ -74,6 +76,7 @@ export default function Page() {
         </section>
 
         <section id="about" className="mt-10 mb-10">
+           <TextFlippingBoardDemo/>
           <div className="flex min-h-0 flex-col gap-y-4">
             <BlurFade delay={BLUR_FADE_DELAY * 3}>
               <h2 className="text-xl font-bold">
