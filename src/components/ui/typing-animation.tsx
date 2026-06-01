@@ -4,7 +4,7 @@ import {
   useEffect,
   useMemo,
   useRef,
-  useState,
+  useReducer,
   type ComponentType,
   type RefAttributes,
   type RefObject,
@@ -18,6 +18,7 @@ import {
 } from "motion/react"
 
 import { cn } from "@/lib/utils"
+import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion"
 
 const motionElements = {
   article: motion.article,
@@ -76,14 +77,53 @@ export function TypingAnimation({
   cursorStyle = "line",
   ...props
 }: TypingAnimationProps) {
+  const prefersReducedMotion = usePrefersReducedMotion()
   const MotionComponent = motionElements[
     Component
   ] as TypingAnimationMotionComponent
 
-  const [displayedText, setDisplayedText] = useState<string>("")
-  const [currentWordIndex, setCurrentWordIndex] = useState(0)
-  const [currentCharIndex, setCurrentCharIndex] = useState(0)
-  const [phase, setPhase] = useState<"typing" | "pause" | "deleting">("typing")
+  type Phase = "typing" | "pause" | "deleting"
+  type TypingState = {
+    displayedText: string
+    currentWordIndex: number
+    currentCharIndex: number
+    phase: Phase
+  }
+
+  type Action =
+    | { type: "reset" }
+    | { type: "setDisplayedText"; value: string }
+    | { type: "setCurrentWordIndex"; value: number }
+    | { type: "setCurrentCharIndex"; value: number }
+    | { type: "setPhase"; value: Phase }
+
+  const [state, dispatch] = useReducer(
+    (s: TypingState, a: Action): TypingState => {
+      switch (a.type) {
+        case "reset":
+          return {
+            displayedText: "",
+            currentWordIndex: 0,
+            currentCharIndex: 0,
+            phase: "typing",
+          }
+        case "setDisplayedText":
+          return { ...s, displayedText: a.value }
+        case "setCurrentWordIndex":
+          return { ...s, currentWordIndex: a.value }
+        case "setCurrentCharIndex":
+          return { ...s, currentCharIndex: a.value }
+        case "setPhase":
+          return { ...s, phase: a.value }
+      }
+    },
+    {
+      displayedText: "",
+      currentWordIndex: 0,
+      currentCharIndex: 0,
+      phase: "typing",
+    }
+  )
   const elementRef = useRef<HTMLElement | null>(null)
   const isInView = useInView(elementRef as RefObject<Element>, {
     amount: 0.3,
@@ -106,61 +146,69 @@ export function TypingAnimation({
   )
 
   useEffect(() => {
-    setDisplayedText("")
-    setCurrentWordIndex(0)
-    setCurrentCharIndex(0)
-    setPhase("typing")
-  }, [animationSourceKey])
+    if (prefersReducedMotion) return
+    dispatch({ type: "reset" })
+  }, [animationSourceKey, prefersReducedMotion])
 
   useEffect(() => {
+    if (prefersReducedMotion) return
     let timeout: ReturnType<typeof setTimeout> | null = null
 
     if (shouldStart && wordsToAnimate.length > 0) {
       const timeoutDelay =
-        delay > 0 && displayedText === ""
+        delay > 0 && state.displayedText === ""
           ? delay
-          : phase === "typing"
+          : state.phase === "typing"
             ? typingSpeed
-            : phase === "deleting"
+            : state.phase === "deleting"
               ? deletingSpeed
               : pauseDelay
 
       timeout = setTimeout(() => {
-        const currentWord = wordsToAnimate[currentWordIndex] || ""
+        const currentWord = wordsToAnimate[state.currentWordIndex] || ""
         const graphemes = Array.from(currentWord)
 
-        switch (phase) {
+        switch (state.phase) {
           case "typing":
-            if (currentCharIndex < graphemes.length) {
-              setDisplayedText(
-                graphemes.slice(0, currentCharIndex + 1).join("")
-              )
-              setCurrentCharIndex(currentCharIndex + 1)
+            if (state.currentCharIndex < graphemes.length) {
+              dispatch({
+                type: "setDisplayedText",
+                value: graphemes.slice(0, state.currentCharIndex + 1).join(""),
+              })
+              dispatch({
+                type: "setCurrentCharIndex",
+                value: state.currentCharIndex + 1,
+              })
             } else {
               if (hasMultipleWords || loop) {
                 const isLastWord =
-                  currentWordIndex === wordsToAnimate.length - 1
+                  state.currentWordIndex === wordsToAnimate.length - 1
                 if (!isLastWord || loop) {
-                  setPhase("pause")
+                  dispatch({ type: "setPhase", value: "pause" })
                 }
               }
             }
             break
 
           case "pause":
-            setPhase("deleting")
+            dispatch({ type: "setPhase", value: "deleting" })
             break
 
           case "deleting":
-            if (currentCharIndex > 0) {
-              setDisplayedText(
-                graphemes.slice(0, currentCharIndex - 1).join("")
-              )
-              setCurrentCharIndex(currentCharIndex - 1)
+            if (state.currentCharIndex > 0) {
+              dispatch({
+                type: "setDisplayedText",
+                value: graphemes.slice(0, state.currentCharIndex - 1).join(""),
+              })
+              dispatch({
+                type: "setCurrentCharIndex",
+                value: state.currentCharIndex - 1,
+              })
             } else {
-              const nextIndex = (currentWordIndex + 1) % wordsToAnimate.length
-              setCurrentWordIndex(nextIndex)
-              setPhase("typing")
+              const nextIndex =
+                (state.currentWordIndex + 1) % wordsToAnimate.length
+              dispatch({ type: "setCurrentWordIndex", value: nextIndex })
+              dispatch({ type: "setPhase", value: "typing" })
             }
             break
         }
@@ -174,10 +222,10 @@ export function TypingAnimation({
     }
   }, [
     shouldStart,
-    phase,
-    currentCharIndex,
-    currentWordIndex,
-    displayedText,
+    state.phase,
+    state.currentCharIndex,
+    state.currentWordIndex,
+    state.displayedText,
     wordsToAnimate,
     hasMultipleWords,
     loop,
@@ -185,21 +233,23 @@ export function TypingAnimation({
     deletingSpeed,
     pauseDelay,
     delay,
+    prefersReducedMotion,
   ])
 
   const currentWordGraphemes = Array.from(
-    wordsToAnimate[currentWordIndex] || ""
+    wordsToAnimate[state.currentWordIndex] || ""
   )
   const isComplete =
     !loop &&
-    currentWordIndex === wordsToAnimate.length - 1 &&
-    currentCharIndex >= currentWordGraphemes.length &&
-    phase !== "deleting"
+    state.currentWordIndex === wordsToAnimate.length - 1 &&
+    state.currentCharIndex >= currentWordGraphemes.length &&
+    state.phase !== "deleting"
 
   const shouldShowCursor =
     showCursor &&
+    !prefersReducedMotion &&
     !isComplete &&
-    (hasMultipleWords || loop || currentCharIndex < currentWordGraphemes.length)
+    (hasMultipleWords || loop || state.currentCharIndex < currentWordGraphemes.length)
 
   const getCursorChar = () => {
     switch (cursorStyle) {
@@ -223,7 +273,7 @@ export function TypingAnimation({
       )}
       {...props}
     >
-      {displayedText}
+      {prefersReducedMotion ? wordsToAnimate[0] ?? "" : state.displayedText}
       {shouldShowCursor && (
         <span
           className={cn("inline-block", blinkCursor && "animate-blink-cursor")}

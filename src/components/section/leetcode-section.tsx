@@ -34,29 +34,83 @@ const FALLBACK_STATS: LeetCodeStats = {
   maxStreak: 7,
 };
 
+const LEETCODE_USERNAME = "Priyanshu05134";
+const LEETCODE_CACHE_KEY = "leetcode:stats:v1";
+const LEETCODE_CACHE_TTL_MS = 1000 * 60 * 60 * 12; // 12 hours
+
+type StatsSource = "live" | "cache" | "fallback";
+
+function isLeetCodeStats(value: unknown): value is LeetCodeStats {
+  if (!value || typeof value !== "object") return false;
+  const v = value as Record<string, unknown>;
+  const numberFields: Array<keyof LeetCodeStats> = [
+    "totalSolved",
+    "easySolved",
+    "mediumSolved",
+    "hardSolved",
+    "acceptanceRate",
+    "ranking",
+    "contestRating",
+    "totalActiveDays",
+    "maxStreak",
+  ];
+  return numberFields.every((k) => typeof v[k] === "number" && Number.isFinite(v[k] as number));
+}
+
+function readCachedStats(): { stats: LeetCodeStats; fetchedAt: number } | null {
+  try {
+    const raw = localStorage.getItem(LEETCODE_CACHE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { stats?: unknown; fetchedAt?: unknown };
+    if (!parsed || typeof parsed !== "object") return null;
+    if (!isLeetCodeStats(parsed.stats)) return null;
+    if (typeof parsed.fetchedAt !== "number" || !Number.isFinite(parsed.fetchedAt)) return null;
+    return { stats: parsed.stats, fetchedAt: parsed.fetchedAt };
+  } catch {
+    return null;
+  }
+}
+
+function writeCachedStats(stats: LeetCodeStats) {
+  try {
+    localStorage.setItem(
+      LEETCODE_CACHE_KEY,
+      JSON.stringify({ stats, fetchedAt: Date.now() })
+    );
+  } catch {
+    // ignore storage errors (private mode, quota, etc.)
+  }
+}
+
 export default function LeetCodeSection() {
   const [stats, setStats] = useState<LeetCodeStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [source, setSource] = useState<StatsSource>("live");
 
   useEffect(() => {
+    let cancelled = false;
+
+    const cached = readCachedStats();
+    if (cached) {
+      setStats(cached.stats);
+      setSource("cache");
+      setLoading(false);
+    }
+
     const fetchLeetCodeStats = async () => {
       try {
         // Try multiple CORS proxies as fallbacks
         const apis = [
-          `https://leetcode-stats-api.herokuapp.com/Priyanshu05134`,
-          `https://cors-anywhere.herokuapp.com/https://leetcode-stats-api.herokuapp.com/Priyanshu05134`,
-          `https://api.allorigins.win/raw?url=https://leetcode-stats-api.herokuapp.com/Priyanshu05134`
+          `https://leetcode-stats-api.herokuapp.com/${LEETCODE_USERNAME}`,
+          `https://cors-anywhere.herokuapp.com/https://leetcode-stats-api.herokuapp.com/${LEETCODE_USERNAME}`,
+          `https://api.allorigins.win/raw?url=https://leetcode-stats-api.herokuapp.com/${LEETCODE_USERNAME}`,
         ];
         
         let data = null;
         for (const api of apis) {
           try {
-            const response = await fetch(api, {
-              headers: {
-                'Origin': window.location.origin,
-              },
-            });
+            const response = await fetch(api);
             if (response.ok) {
               data = await response.json();
               break;
@@ -67,7 +121,7 @@ export default function LeetCodeSection() {
         }
         
         if (data && data.status === "success") {
-          setStats({
+          const nextStats: LeetCodeStats = {
             totalSolved: data.totalSolved || FALLBACK_STATS.totalSolved,
             easySolved: data.easySolved || FALLBACK_STATS.easySolved,
             mediumSolved: data.mediumSolved || FALLBACK_STATS.mediumSolved,
@@ -77,27 +131,52 @@ export default function LeetCodeSection() {
             contestRating: data.contestRating || FALLBACK_STATS.contestRating,
             totalActiveDays: data.totalActiveDays || FALLBACK_STATS.totalActiveDays,
             maxStreak: data.maxStreak || FALLBACK_STATS.maxStreak,
-          });
+          };
+
+          if (cancelled) return;
+          setStats(nextStats);
+          setSource("live");
+          writeCachedStats(nextStats);
+          setError(false);
         } else {
-          // Use fallback data
-          setStats(FALLBACK_STATS);
+          if (cancelled) return;
+          // If we already rendered cached stats, keep them; otherwise fall back.
+          if (!cached) {
+            setStats(FALLBACK_STATS);
+            setSource("fallback");
+          }
+          setError(true);
         }
-        setError(false);
       } catch (error) {
         console.error("Error fetching LeetCode stats:", error);
-        setStats(FALLBACK_STATS);
+        if (cancelled) return;
+        if (!cached) {
+          setStats(FALLBACK_STATS);
+          setSource("fallback");
+        }
         setError(true);
       } finally {
+        if (cancelled) return;
         setLoading(false);
       }
     };
 
-    fetchLeetCodeStats();
+    const cacheIsFresh = cached ? Date.now() - cached.fetchedAt < LEETCODE_CACHE_TTL_MS : false;
+    if (!cacheIsFresh) {
+      fetchLeetCodeStats();
+    } else {
+      // Fresh cache: no network call, no loading spinner.
+      setError(false);
+    }
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   if (loading) {
     return (
-      <div className="flex min-h-[400px] flex-col gap-y-8 w-full">
+      <div className="flex min-h-[240px] sm:min-h-[400px] flex-col gap-y-8 w-full">
         <div className="text-center py-12">
           <div className="animate-pulse">Loading LeetCode stats...</div>
         </div>
@@ -113,8 +192,13 @@ export default function LeetCodeSection() {
   const totalProgress = (stats.totalSolved / 3915) * 100;
 
   return (
-    <div className="flex min-h-0 flex-col gap-y-8 w-full relative group">
-      <div className="absolute -inset-4 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+  <div
+  className="flex min-h-0 flex-col gap-y-8 w-full relative group overflow-y-auto overflow-x-hidden"
+  style={{
+    scrollbarWidth: "none", // Firefox
+    msOverflowStyle: "none", // IE/Edge
+  }}
+>  <div className="absolute -inset-4 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
         <BorderBeam size={300} duration={10} />
       </div>
       
@@ -132,13 +216,12 @@ export default function LeetCodeSection() {
         {/* Error Warning (if API failed) */}
         {error && (
           <div className="flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 px-3 py-1.5 rounded-full">
-            <AlertCircle className="h-3 w-3" />
-            <span>Using cached stats — API temporarily unavailable</span>
+            
           </div>
         )}
 
         <div className="text-center">
-          <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl mb-3">
+          <h2 className="text-2xl font-bold tracking-tighter sm:text-3xl md:text-4xl mb-3">
             Problem Solver
           </h2>
           <p className="text-muted-foreground md:text-lg max-w-2xl mx-auto">
@@ -152,34 +235,34 @@ export default function LeetCodeSection() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="p-4 rounded-xl border bg-card/50 backdrop-blur-sm text-center hover:bg-card/60 transition-all duration-300">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+        <div className="p-3 sm:p-4 rounded-xl border bg-card/50 backdrop-blur-sm text-center hover:bg-card/60 transition-all duration-300">
           <Trophy className="h-6 w-6 text-yellow-500 mx-auto mb-2" />
-          <div className="text-2xl font-bold">
+          <div className="text-xl sm:text-2xl font-bold">
             <NumberTicker value={stats.contestRating} />
           </div>
           <p className="text-xs text-muted-foreground">Contest Rating</p>
         </div>
         
-        <div className="p-4 rounded-xl border bg-card/50 backdrop-blur-sm text-center hover:bg-card/60 transition-all duration-300">
+        <div className="p-3 sm:p-4 rounded-xl border bg-card/50 backdrop-blur-sm text-center hover:bg-card/60 transition-all duration-300">
           <Target className="h-6 w-6 text-green-500 mx-auto mb-2" />
-          <div className="text-2xl font-bold">
+          <div className="text-xl sm:text-2xl font-bold">
             <NumberTicker value={Math.round(stats.acceptanceRate)} />%
           </div>
           <p className="text-xs text-muted-foreground">Acceptance Rate</p>
         </div>
         
-        <div className="p-4 rounded-xl border bg-card/50 backdrop-blur-sm text-center hover:bg-card/60 transition-all duration-300">
+        <div className="p-3 sm:p-4 rounded-xl border bg-card/50 backdrop-blur-sm text-center hover:bg-card/60 transition-all duration-300">
           <Calendar className="h-6 w-6 text-blue-500 mx-auto mb-2" />
-          <div className="text-2xl font-bold">
+          <div className="text-xl sm:text-2xl font-bold">
             <NumberTicker value={stats.totalActiveDays} />
           </div>
           <p className="text-xs text-muted-foreground">Active Days</p>
         </div>
         
-        <div className="p-4 rounded-xl border bg-card/50 backdrop-blur-sm text-center hover:bg-card/60 transition-all duration-300">
+        <div className="p-3 sm:p-4 rounded-xl border bg-card/50 backdrop-blur-sm text-center hover:bg-card/60 transition-all duration-300">
           <Flame className="h-6 w-6 text-orange-500 mx-auto mb-2" />
-          <div className="text-2xl font-bold">
+          <div className="text-xl sm:text-2xl font-bold">
             <NumberTicker value={stats.maxStreak} />
           </div>
           <p className="text-xs text-muted-foreground">Max Streak</p>
@@ -226,7 +309,7 @@ export default function LeetCodeSection() {
       {/* CTA Button */}
       <div className="text-center pt-4">
         <Link href="https://leetcode.com/u/Priyanshu05134/" target="_blank">
-          <ShimmerButton className="mx-auto gap-2">
+          <ShimmerButton className="mx-auto gap-2 w-full sm:w-auto justify-center">
             <Code2 className="h-4 w-4" />
             View LeetCode Profile
             <span>→</span>

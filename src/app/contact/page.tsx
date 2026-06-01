@@ -89,7 +89,7 @@ export default function ContactPage() {
   return (
     <div className="relative min-h-screen w-full overflow-hidden">
       <AuroraBackground>
-        <div className="relative w-full h-full overflow-y-auto overflow-x-hidden">
+        <div className="relative w-full h-full overflow-y-auto overflow-x-hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:none]">
           <Meteors number={15} />
 
           <div className="relative z-10 container mx-auto px-4 sm:px-6 py-8 sm:py-12 md:py-16">
@@ -101,7 +101,7 @@ export default function ContactPage() {
                   Get In Touch
                 </h1>
                 <p className="text-muted-foreground mt-2 sm:mt-3 text-sm sm:text-base px-4 max-w-2xl mx-auto">
-                  Let's build something amazing together
+                  Let&apos;s build something amazing together
                 </p>
               </div>
             </BlurFade>
@@ -173,7 +173,7 @@ export default function ContactPage() {
                         Message Sent!
                       </h2>
                       <p className="text-muted-foreground mt-2 text-sm sm:text-base">
-                        Thanks for reaching out. I'll get back to you soon!
+                        Thanks for reaching out. I&apos;ll get back to you soon!
                       </p>
                     </div>
                   ) : (
@@ -189,39 +189,71 @@ export default function ContactPage() {
                       {/* Name Field */}
                       <div>
                         <Input
-                          name="name"
-                          placeholder="Your Name"
-                          value={formData.name}
-                          onChange={handleChange}
-                          disabled={isSubmitting}
-                          className="w-full text-sm sm:text-base"
-                        />
+  name="name"
+  placeholder="Your Name"
+  value={formData.name}
+  onChange={handleChange}
+  disabled={isSubmitting}
+  className="
+    h-14
+    text-base
+    px-4
+    rounded-xl
+    border-2
+    bg-background/70
+    backdrop-blur-sm
+    focus-visible:ring-2
+    focus-visible:ring-primary/50
+  "
+/>
                       </div>
 
                       {/* Email Field */}
                       <div>
-                        <Input
-                          name="email"
-                          type="email"
-                          placeholder="Your Email"
-                          value={formData.email}
-                          onChange={handleChange}
-                          disabled={isSubmitting}
-                          className="w-full text-sm sm:text-base"
-                        />
+                       <Input
+  name="email"
+  type="email"
+  placeholder="Your Email"
+  value={formData.email}
+  onChange={handleChange}
+  disabled={isSubmitting}
+  className="
+    h-14
+    text-base
+    px-4
+    rounded-xl
+    border-2
+    bg-background/70
+    backdrop-blur-sm
+    focus-visible:ring-2
+    focus-visible:ring-primary/50
+  "
+/>
                       </div>
 
                       {/* Message Field */}
                       <div>
-                        <Textarea
-                          name="message"
-                          placeholder="Your Message"
-                          rows={5}
-                          value={formData.message}
-                          onChange={handleChange}
-                          disabled={isSubmitting}
-                          className="w-full resize-none text-sm sm:text-base"
-                        />
+                       <Textarea
+  name="message"
+  placeholder="Tell me about your project, idea, or opportunity..."
+  value={formData.message}
+  onChange={handleChange}
+  disabled={isSubmitting}
+  className="
+    min-h-[220px]
+    md:min-h-[280px]
+    resize-none
+    text-base
+    leading-7
+    p-5
+    rounded-xl
+    border-2
+    bg-background/70
+    backdrop-blur-sm
+    focus-visible:ring-2
+    focus-visible:ring-primary/50
+  "
+/>
                       </div>
 
                       {/* Submit Button */}

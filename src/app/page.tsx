@@ -44,7 +44,7 @@ export default function Page() {
                   text={`Hi, I'm`}
                 />
                 <AuroraText className="text-3xl sm:text-4xl lg:text-5xl font-bold">
-                  {DATA.name.split(" ")[0]}
+                  {DATA.name}
                 </AuroraText>
                 <BlurFadeText
                   className="text-muted-foreground max-w-[600px] md:text-lg lg:text-xl"
@@ -84,29 +84,34 @@ export default function Page() {
                 <AnimatedShinyText className="text-inherit">About Me</AnimatedShinyText>
               </h2>
             </BlurFade>
-            <BlurFade delay={BLUR_FADE_DELAY * 4}>
-             <div className="prose max-w-full text-pretty font-sans leading-relaxed text-muted-foreground dark:prose-invert">
-  <p>
-    <Highlighter action="highlight" color="#00FF00">
-      Software Engineer
-    </Highlighter>{" "}
-    passionate about{" "}
-    <Highlighter action="underline" color="#FF9800">
-      Data Structures & Algorithms
-    </Highlighter>{" "}
-    with 167+ problems solved on LeetCode. Skilled in building{" "}
-    <Highlighter action="highlight" color="#87CEFA">
-      scalable full-stack applications
-    </Highlighter>{" "}
-    using React, Next.js, and Node.js. Active hackathon participant with
-    experience in creating{" "}
-    <Highlighter action="underline" color="#FF6B6B">
-      innovative solutions under pressure
-    </Highlighter>
-    .
-  </p>
-</div>
-            </BlurFade>
+          <BlurFade
+  delay={BLUR_FADE_DELAY * 4}
+  duration={1.2}
+  yOffset={8}
+  blur="4px"
+>
+  <div className="prose max-w-full text-pretty font-sans leading-relaxed text-muted-foreground dark:prose-invert">
+    <p className="text-base md:text-lg leading-8">
+      <Highlighter action="highlight" color="#00FF00">
+        Software Engineer
+      </Highlighter>{" "}
+      passionate about{" "}
+      <Highlighter action="underline" color="#FF9800">
+        Data Structures & Algorithms
+      </Highlighter>{" "}
+      with 167+ problems solved on LeetCode. Skilled in building{" "}
+      <Highlighter action="highlight" color="#87CEFA">
+        scalable full-stack applications
+      </Highlighter>{" "}
+      using React, Next.js, and Node.js. Active hackathon participant with
+      experience in creating{" "}
+      <Highlighter action="underline" color="#FF6B6B">
+        innovative solutions under pressure
+      </Highlighter>
+      .
+    </p>
+  </div>
+</BlurFade>
           </div>
         </section>
 

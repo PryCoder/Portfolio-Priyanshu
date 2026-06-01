@@ -411,12 +411,12 @@ export function TextFlippingBoard({
   return (
     <div
       className={cn(
-        "relative mx-auto w-full max-w-3xl rounded-xl bg-neutral-100 p-2 shadow-xl md:rounded-2xl md:p-4 dark:bg-neutral-900 dark:shadow-[0_20px_70px_-15px_rgba(0,0,0,0.6)]",
+        "relative mx-auto w-full max-w-[98vw] sm:max-w-2xl md:max-w-3xl rounded-xl bg-neutral-100 p-2 sm:p-4 md:p-6 shadow-xl md:rounded-2xl dark:bg-neutral-900 dark:shadow-[0_20px_70px_-15px_rgba(0,0,0,0.6)]",
         className,
       )}
     >
       <div
-        className="grid gap-px md:gap-[3px]"
+        className="grid gap-[1px] sm:gap-[2px] md:gap-[3px]"
         style={{ gridTemplateColumns: `repeat(${BOARD_COLS}, 1fr)` }}
       >
         {board.map((row, r) =>

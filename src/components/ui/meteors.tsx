@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react"
 
 import { cn } from "@/lib/utils"
+import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion"
 
 interface MeteorsProps {
   number?: number
@@ -23,11 +24,15 @@ export const Meteors = ({
   angle = 215,
   className,
 }: MeteorsProps) => {
+  const prefersReducedMotion = usePrefersReducedMotion()
   const [meteorStyles, setMeteorStyles] = useState<Array<React.CSSProperties>>(
     []
   )
 
   useEffect(() => {
+    if (prefersReducedMotion) {
+      return
+    }
     const styles = [...new Array(number)].map(() => ({
       "--angle": -angle + "deg",
       top: "-5%",
@@ -37,8 +42,13 @@ export const Meteors = ({
         Math.floor(Math.random() * (maxDuration - minDuration) + minDuration) +
         "s",
     }))
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMeteorStyles(styles)
-  }, [number, minDelay, maxDelay, minDuration, maxDuration, angle])
+  }, [number, minDelay, maxDelay, minDuration, maxDuration, angle, prefersReducedMotion])
+
+  if (prefersReducedMotion) {
+    return null
+  }
 
   return (
     <>

@@ -11,6 +11,7 @@ import {
 import { motion } from "motion/react"
 
 import { cn } from "@/lib/utils"
+import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion"
 
 export interface AnimatedGridPatternProps extends ComponentPropsWithoutRef<"svg"> {
   width?: number
@@ -43,31 +44,41 @@ export function AnimatedGridPattern({
   repeatDelay = 0.5,
   ...props
 }: AnimatedGridPatternProps) {
+  const prefersReducedMotion = usePrefersReducedMotion()
   const id = useId()
   const containerRef = useRef<SVGSVGElement | null>(null)
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
   const [squares, setSquares] = useState<Array<Square>>([])
 
+  const getPosForDimensions = useCallback(
+    (nextDimensions: { width: number; height: number }): [number, number] => {
+      return [
+        Math.floor((Math.random() * nextDimensions.width) / width),
+        Math.floor((Math.random() * nextDimensions.height) / height),
+      ]
+    },
+    [height, width]
+  )
+
   const getPos = useCallback((): [number, number] => {
-    return [
-      Math.floor((Math.random() * dimensions.width) / width),
-      Math.floor((Math.random() * dimensions.height) / height),
-    ]
-  }, [dimensions.height, dimensions.width, height, width])
+    return getPosForDimensions(dimensions)
+  }, [dimensions, getPosForDimensions])
 
   const generateSquares = useCallback(
-    (count: number) => {
+    (count: number, nextDimensions?: { width: number; height: number }) => {
+      const dims = nextDimensions ?? dimensions
       return Array.from({ length: count }, (_, i) => ({
         id: i,
-        pos: getPos(),
+        pos: getPosForDimensions(dims),
         iteration: 0,
       }))
     },
-    [getPos]
+    [dimensions, getPosForDimensions]
   )
 
   const updateSquarePosition = useCallback(
     (squareId: number) => {
+      if (prefersReducedMotion) return
       setSquares((currentSquares) => {
         const current = currentSquares[squareId]
         if (!current || current.id !== squareId) return currentSquares
@@ -82,14 +93,8 @@ export function AnimatedGridPattern({
         return nextSquares
       })
     },
-    [getPos]
+    [getPos, prefersReducedMotion]
   )
-
-  useEffect(() => {
-    if (dimensions.width && dimensions.height) {
-      setSquares(generateSquares(numSquares))
-    }
-  }, [dimensions.width, dimensions.height, generateSquares, numSquares])
 
   useEffect(() => {
     const element = containerRef.current
@@ -98,9 +103,10 @@ export function AnimatedGridPattern({
     if (element) {
       resizeObserver = new ResizeObserver((entries) => {
         for (const entry of entries) {
+          const nextWidth = entry.contentRect.width
+          const nextHeight = entry.contentRect.height
+
           setDimensions((currentDimensions) => {
-            const nextWidth = entry.contentRect.width
-            const nextHeight = entry.contentRect.height
             if (
               currentDimensions.width === nextWidth &&
               currentDimensions.height === nextHeight
@@ -109,6 +115,14 @@ export function AnimatedGridPattern({
             }
             return { width: nextWidth, height: nextHeight }
           })
+
+          if (nextWidth && nextHeight) {
+            if (!prefersReducedMotion) {
+              setSquares(
+                generateSquares(numSquares, { width: nextWidth, height: nextHeight })
+              )
+            }
+          }
         }
       })
 
@@ -150,27 +164,28 @@ export function AnimatedGridPattern({
       </defs>
       <rect width="100%" height="100%" fill={`url(#${id})`} />
       <svg x={x} y={y} className="overflow-visible">
-        {squares.map(({ pos: [squareX, squareY], id, iteration }, index) => (
-          <motion.rect
-            initial={{ opacity: 0 }}
-            animate={{ opacity: maxOpacity }}
-            transition={{
-              duration,
-              repeat: 1,
-              delay: index * 0.1,
-              repeatType: "reverse",
-              repeatDelay,
-            }}
-            onAnimationComplete={() => updateSquarePosition(id)}
-            key={`${id}-${iteration}`}
-            width={width - 1}
-            height={height - 1}
-            x={squareX * width + 1}
-            y={squareY * height + 1}
-            fill="currentColor"
-            strokeWidth="0"
-          />
-        ))}
+        {!prefersReducedMotion &&
+          squares.map(({ pos: [squareX, squareY], id, iteration }, index) => (
+            <motion.rect
+              initial={{ opacity: 0 }}
+              animate={{ opacity: maxOpacity }}
+              transition={{
+                duration,
+                repeat: 1,
+                delay: index * 0.1,
+                repeatType: "reverse",
+                repeatDelay,
+              }}
+              onAnimationComplete={() => updateSquarePosition(id)}
+              key={`${id}-${iteration}`}
+              width={width - 1}
+              height={height - 1}
+              x={squareX * width + 1}
+              y={squareY * height + 1}
+              fill="currentColor"
+              strokeWidth="0"
+            />
+          ))}
       </svg>
     </svg>
   )
