@@ -6,6 +6,7 @@ import BlurFadeText from "@/components/magicui/blur-fade-text";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DATA } from "@/data/resume";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import Markdown from "react-markdown";
 import ContactSection from "@/components/section/contact-section";
 import HackathonsSection from "@/components/section/hackathons-section";
@@ -21,6 +22,7 @@ import { useState } from "react";
 import { TextFlippingBoard } from "@/components/ui/text-flipping-board";
 import { TextFlippingBoardDemo } from "@/components/section/flip";
 import { Highlighter } from "@/components/ui/highlighter";
+import { PointerHighlight } from "@/components/ui/pointer-highlight";
 
 
 const BLUR_FADE_DELAY = 0.04;
@@ -47,11 +49,34 @@ export default function Page() {
                 <AuroraText className="text-3xl sm:text-4xl lg:text-5xl font-bold">
                   {DATA.name}
                 </AuroraText>
-                <BlurFadeText
-                  className="text-muted-foreground max-w-[600px] md:text-lg lg:text-xl"
-                  delay={BLUR_FADE_DELAY}
-                  text={DATA.description}
-                />
+           <BlurFade delay={BLUR_FADE_DELAY}>
+  <div className="text-muted-foreground max-w-[600px] md:text-lg lg:text-xl leading-relaxed">
+    <div id="highlight-wrapper" className="inline-block">
+      <PointerHighlight
+        rectangleClassName="bg-blue-100 dark:bg-blue-900/50 border border-blue-300 dark:border-blue-700 rounded-md"
+        pointerClassName="text-blue-500 h-3 w-3"
+        containerClassName="inline-block"
+      >
+        <span className="relative z-10">
+          {DATA.description}
+        </span>
+      </PointerHighlight>
+    </div>
+  </div>
+</BlurFade>
+
+<script dangerouslySetInnerHTML={{
+  __html: `
+    setTimeout(() => {
+      const wrapper = document.getElementById('highlight-wrapper');
+      if (wrapper) {
+        wrapper.style.pointerEvents = 'auto';
+        const event = new MouseEvent('mouseenter', { bubbles: true });
+        wrapper.dispatchEvent(event);
+      }
+    }, 8000);
+  `
+}} />
                 <BlurFade delay={BLUR_FADE_DELAY * 2}>
   <div className="flex gap-3 mt-4">
     <a href="/resume.pdf" download>
