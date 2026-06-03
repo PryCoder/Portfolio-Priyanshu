@@ -10,6 +10,9 @@ const eslintConfig = defineConfig([
         'out/**',
         'build/**',
         'next-env.d.ts',
+
+        // Generated files (do not hand-edit):
+        '.content-collections/**',
     ]),
 ])
 

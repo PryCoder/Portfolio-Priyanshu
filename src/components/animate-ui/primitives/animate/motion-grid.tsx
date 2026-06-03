@@ -5,7 +5,6 @@ import { motion, type HTMLMotionProps } from 'motion/react';
 
 import { cn } from '@/lib/utils';
 import { getStrictContext } from '@/lib/get-strict-context';
-import { Slot, type WithAsChild } from '@/components/animate-ui/primitives/animate/slot';
 
 type FrameDot = [number, number];
 type Frame = FrameDot[];
@@ -23,14 +22,14 @@ type MotionGridContextType = {
 const [MotionGridProvider, useMotionGrid] =
   getStrictContext<MotionGridContextType>('MotionGridContext');
 
-type MotionGridProps = WithAsChild<
-  {
-    gridSize: [number, number];
-    frames: Frames;
-    duration?: number;
-    animate?: boolean;
-  } & HTMLMotionProps<'div'>
->;
+interface MotionGridProps extends Omit<HTMLMotionProps<'div'>, 'children' | 'ref'> {
+  gridSize: [number, number];
+  frames: Frames;
+  duration?: number;
+  animate?: boolean;
+  asChild?: boolean;
+  children?: React.ReactNode;
+}
 
 const MotionGrid = ({
   gridSize,
@@ -39,6 +38,7 @@ const MotionGrid = ({
   animate = true,
   asChild = false,
   style,
+  children,
   ...props
 }: MotionGridProps) => {
   const [index, setIndex] = React.useState(0);
@@ -55,34 +55,50 @@ const MotionGrid = ({
 
   const [cols, rows] = gridSize;
 
-  const Component = asChild ? Slot : motion.div;
+  const commonProps = {
+    'data-animate': animate,
+    style: {
+      display: 'grid',
+      gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
+      gridAutoRows: '1fr',
+      ...style,
+    } as React.CSSProperties,
+    ...props,
+  };
+
+  const contextValue = { animate, index, cols, rows, frames, duration };
+
+  if (asChild) {
+    return (
+      <MotionGridProvider value={contextValue}>
+        {React.isValidElement(children) 
+          ? React.cloneElement(children as React.ReactElement, commonProps)
+          : children}
+      </MotionGridProvider>
+    );
+  }
 
   return (
-    <MotionGridProvider
-      value={{ animate, index, cols, rows, frames, duration }}
-    >
-      <Component
-        data-animate={animate}
-        style={{
-          display: 'grid',
-          gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
-          gridAutoRows: '1fr',
-          ...style,
-        }}
-        {...props}
-      />
+    <MotionGridProvider value={contextValue}>
+      <motion.div {...commonProps}>
+        {children}
+      </motion.div>
     </MotionGridProvider>
   );
 };
 
-type MotionGridCellsProps = HTMLMotionProps<'div'> & {
-  activeProps?: HTMLMotionProps<'div'>;
-  inactiveProps?: HTMLMotionProps<'div'>;
-};
+interface MotionGridCellsProps extends Omit<HTMLMotionProps<'div'>, 'children' | 'ref'> {
+  activeProps?: Omit<HTMLMotionProps<'div'>, 'children' | 'ref'>;
+  inactiveProps?: Omit<HTMLMotionProps<'div'>, 'children' | 'ref'>;
+  className?: string;
+  style?: React.CSSProperties;
+}
 
 function MotionGridCells({
   activeProps,
   inactiveProps,
+  className,
+  style,
   ...props
 }: MotionGridCellsProps) {
   const { animate, index, cols, rows, frames, duration } = useMotionGrid();
@@ -91,31 +107,28 @@ function MotionGridCells({
     frames[index]?.map(([x, y]) => y * cols + x) ?? [],
   );
 
-  return Array.from({ length: cols * rows }).map((_, i) => {
-    const isActive = active.has(i);
-    const componentProps: HTMLMotionProps<'div'> = {
-      ...(isActive ? activeProps : inactiveProps),
-    };
-    componentProps.className = cn(
-      props?.className,
-      isActive ? activeProps?.className : inactiveProps?.className,
-    );
-    componentProps.style = {
-      ...props?.style,
-      ...(isActive ? activeProps?.style : inactiveProps?.style),
-    };
-
-    return (
-      <motion.div
-        key={i}
-        data-active={isActive}
-        data-animate={animate}
-        transition={{ duration, ease: 'easeInOut' }}
-        {...props}
-        {...componentProps}
-      />
-    );
-  });
+  return (
+    <>
+      {Array.from({ length: cols * rows }).map((_, i) => {
+        const isActive = active.has(i);
+        const activeStyle = isActive ? activeProps?.style : inactiveProps?.style;
+        const activeClassName = isActive ? activeProps?.className : inactiveProps?.className;
+        
+        return (
+          <motion.div
+            key={i}
+            data-active={isActive}
+            data-animate={animate}
+            transition={{ duration, ease: 'easeInOut' }}
+            className={cn(className, activeClassName)}
+            style={{ ...style, ...activeStyle }}
+            {...props}
+            {...(isActive ? activeProps : inactiveProps)}
+          />
+        );
+      })}
+    </>
+  );
 }
 
 export {

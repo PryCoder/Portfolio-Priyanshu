@@ -9,22 +9,16 @@ import {
   type HTMLMotionProps,
 } from 'motion/react';
 
-import { Slot, type WithAsChild } from '@/components/animate-ui/primitives/animate/slot';
-
-type MagneticProps = WithAsChild<
-  {
-    children?: React.ReactNode;
-    strength?: number;
-    range?: number;
-    springOptions?: SpringOptions;
-    onlyOnHover?: boolean;
-    disableOnTouch?: boolean;
-    ref?: React.Ref<HTMLElement>;
-  } & HTMLMotionProps<'div'>
->;
+interface MagneticProps extends Omit<HTMLMotionProps<'div'>, 'children' | 'ref'> {
+  strength?: number;
+  range?: number;
+  springOptions?: SpringOptions;
+  onlyOnHover?: boolean;
+  disableOnTouch?: boolean;
+  children?: React.ReactNode;
+}
 
 function Magnetic({
-  ref,
   strength = 0.5,
   range = 120,
   springOptions = { stiffness: 100, damping: 10, mass: 0.5 },
@@ -34,11 +28,10 @@ function Magnetic({
   onMouseEnter,
   onMouseLeave,
   onMouseMove,
-  asChild = false,
+  children,
   ...props
 }: MagneticProps) {
   const localRef = React.useRef<HTMLDivElement>(null);
-  React.useImperativeHandle(ref, () => localRef.current as HTMLDivElement);
 
   const isTouchDevice = React.useMemo(() => {
     if (typeof window === 'undefined') return false;
@@ -82,12 +75,15 @@ function Magnetic({
     return () => window.removeEventListener('mousemove', handle);
   }, [compute, disableOnTouch, isTouchDevice]);
 
-  const Component = asChild ? Slot : motion.div;
-
   return (
-    <Component
+    <motion.div
       ref={localRef}
-      style={{ display: 'inline-block', ...style, x, y }}
+      style={{ 
+        display: 'inline-block',
+        ...style,
+        x: x as any,
+        y: y as any,
+      } as any}
       onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) => {
         if (onlyOnHover) setActive(true);
         onMouseEnter?.(e);
@@ -103,7 +99,9 @@ function Magnetic({
         onMouseMove?.(e);
       }}
       {...props}
-    />
+    >
+      {children}
+    </motion.div>
   );
 }
 

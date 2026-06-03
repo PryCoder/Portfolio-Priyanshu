@@ -22,15 +22,15 @@ export type LogoItem =
 
 export interface LogoLoopProps {
   logos: LogoItem[];
-  speed?: number; // pixels per second
+  speed?: number;
   direction?: "left" | "right" | "up" | "down";
   width?: number | string;
   logoHeight?: number;
   gap?: number;
   pauseOnHover?: boolean;
-  hoverSpeed?: number; // 0 = pause, >0 = slower/faster speed
+  hoverSpeed?: number;
   fadeOut?: boolean;
-  fadeOutColor?: string; // optional custom fade color
+  fadeOutColor?: string;
   scaleOnHover?: boolean;
   renderItem?: (item: LogoItem, key: React.Key) => React.ReactNode;
   ariaLabel?: string;
@@ -72,7 +72,8 @@ const useResizeObserver = (
     return () => {
       observers.forEach((observer) => observer?.disconnect());
     };
-  }, dependencies);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [callback, ...elements, ...dependencies]);
 };
 
 const useImageLoader = (
@@ -112,7 +113,8 @@ const useImageLoader = (
         img.removeEventListener("error", handleImageLoad);
       });
     };
-  }, dependencies);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [seqRef, onLoad, ...dependencies]);
 };
 
 const useAnimationLoop = (
@@ -179,7 +181,7 @@ const useAnimationLoop = (
       }
       lastTimestampRef.current = null;
     };
-  }, [targetVelocity, seqWidth, seqHeight, isHovered, hoverSpeed, isVertical]);
+  }, [targetVelocity, seqWidth, seqHeight, isHovered, hoverSpeed, isVertical, trackRef]);
 };
 
 export const LogoLoop = React.memo<LogoLoopProps>(
@@ -292,6 +294,7 @@ export const LogoLoop = React.memo<LogoLoopProps>(
             {(item as any).node}
           </span>
         ) : (
+          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={(item as any).src}
             srcSet={(item as any).srcSet}
@@ -383,7 +386,7 @@ export const LogoLoop = React.memo<LogoLoopProps>(
         role="region"
         aria-label={ariaLabel}
       >
-        <style jsx>{`
+        <style>{`
           .logoloop-fade-horizontal::before {
             left: 0;
             background: linear-gradient(

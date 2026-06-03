@@ -134,7 +134,8 @@ export function AnimatedGridPattern({
         resizeObserver.disconnect()
       }
     }
-  }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [numSquares, prefersReducedMotion, generateSquares])
 
   return (
     <svg

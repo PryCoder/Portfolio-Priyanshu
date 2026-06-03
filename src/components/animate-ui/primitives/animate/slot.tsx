@@ -80,7 +80,6 @@ function Slot<T extends HTMLElement = HTMLElement>({
     children.type !== null &&
     isMotionComponent(children.type);
 
-  // eslint-disable-next-line react-hooks/static-components
   const Base = isAlreadyMotion
     ? (children.type as React.ElementType)
     : getMotionComponent(children.type as React.ElementType);
