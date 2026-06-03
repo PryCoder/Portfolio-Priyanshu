@@ -6,9 +6,13 @@ import { TextFlippingBoard } from "../ui/text-flipping-board";
 const MESSAGES: string[] = [
   "STAY HUNGRY \nSTAY IN BED \n- STEVE JOBS",
   "What did you get done this week?",
+   "BETTER THAN \nYESTERDAY \nHOPEFULLY",
   "Hi, I'm \nA Problem \nSolver",
   "DONT WORRY \nBE HAPPY FFS.",
-  "LADIES AND GENTLEMEN \nWELCOME TO F#!@# C!@$",
+  "I HAVE A PLAN \nIT INVOLVES \nMORE COFFEE",
+  "TRUST THE \nPROCESS \nQUESTION THE REQUIREMENTS",
+   "I HAVE A PLAN \nIT'S MOSTLY \nHOPE"
+  
 ];
 
 export function TextFlippingBoardDemo() {

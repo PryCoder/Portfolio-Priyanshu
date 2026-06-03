@@ -226,7 +226,7 @@ work : [
 ],hackathons :[
   {
     title: "Code Web Hackathon",
-    dates: "2024",
+    dates: "2025",
     location: "SIES College, Vashi, Navi Mumbai",
     description:
       "Participated in a web development hackathon where I built a full-stack project under time constraints, focusing on UI/UX and real-world problem solving.",
@@ -236,7 +236,7 @@ work : [
   },
   {
     title: "Google Hackathon",
-    dates: "2024",
+    dates: "2025",
     location: "Vile Parle, Mumbai",
     description:
       "Worked on an innovative tech solution as part of a Google-backed hackathon, collaborating in a team and applying modern web technologies.",
@@ -246,7 +246,7 @@ work : [
   },
   {
     title: "Quasar National Hackathon",
-    dates: "2024",
+    dates: "2025",
     location: "Sion, Mumbai",
     description:
       "Participated in a national-level hackathon, building a scalable project and presenting it to judges under competitive conditions.",

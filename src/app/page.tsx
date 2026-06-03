@@ -21,6 +21,7 @@ import { useState } from "react";
 import { TextFlippingBoard } from "@/components/ui/text-flipping-board";
 import { TextFlippingBoardDemo } from "@/components/section/flip";
 import { Highlighter } from "@/components/ui/highlighter";
+import { SparklesCore } from "@/components/ui/sparkles";
 
 const BLUR_FADE_DELAY = 0.04;
 
@@ -30,7 +31,15 @@ export default function Page() {
   return (
     <main className="min-h-dvh flex flex-col gap-14 relative">
       {/* Subtle background effect */}
-     
+      <SparklesCore
+          id="tsparticlesfullpage"
+          background="transparent"
+          minSize={0.6}
+          maxSize={1.4}
+          particleDensity={100}
+          className="h-full w-full"
+          particleColor="#FFFFFF"
+        />
       
       <div className="relative z-10">
         <section id="hero">

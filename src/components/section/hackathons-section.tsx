@@ -12,9 +12,25 @@ import { ShimmerButton } from "@/components/ui/shimmer-button";
 import { Vortex } from "@/components/ui/vortex";
 import { Progress } from "@/components/ui/progress";
 import { useState } from "react";
+import LogoLoop from "../LogoLoop";
+import { SiReact, SiNextdotjs, SiTypescript, SiTailwindcss, SiNodedotjs, SiMongodb, SiPostgresql, SiDocker, SiGit, SiGithub } from 'react-icons/si';
 
 export default function HackathonsSection() {
   const totalHackathons = DATA.hackathons.length;
+
+  // Tech stack logos for the loop
+  const techLogos = [
+    { node: <SiReact className="w-8 h-8 text-[#61DAFB]" />, title: "React", href: "https://react.dev" },
+    { node: <SiNextdotjs className="w-8 h-8 text-black dark:text-white" />, title: "Next.js", href: "https://nextjs.org" },
+    { node: <SiTypescript className="w-8 h-8 text-[#3178C6]" />, title: "TypeScript", href: "https://www.typescriptlang.org" },
+    { node: <SiTailwindcss className="w-8 h-8 text-[#06B6D4]" />, title: "Tailwind CSS", href: "https://tailwindcss.com" },
+    { node: <SiNodedotjs className="w-8 h-8 text-[#339933]" />, title: "Node.js", href: "https://nodejs.org" },
+    { node: <SiMongodb className="w-8 h-8 text-[#47A248]" />, title: "MongoDB", href: "https://www.mongodb.com" },
+    { node: <SiPostgresql className="w-8 h-8 text-[#4169E1]" />, title: "PostgreSQL", href: "https://www.postgresql.org" },
+    { node: <SiDocker className="w-8 h-8 text-[#2496ED]" />, title: "Docker", href: "https://www.docker.com" },
+    { node: <SiGit className="w-8 h-8 text-[#F05032]" />, title: "Git", href: "https://git-scm.com" },
+    { node: <SiGithub className="w-8 h-8 text-black dark:text-white" />, title: "GitHub", href: "https://github.com" },
+  ];
 
   return (
     <section id="hackathons" className="overflow-hidden relative min-h-screen">
@@ -140,6 +156,43 @@ export default function HackathonsSection() {
               </TimelineItem>
             ))}
           </Timeline>
+        </div>
+      </div>
+
+      {/* Simple LogoLoop Section - Just one loop */}
+      <div className="relative z-10 mt-16 mb-8 w-full">
+        <div className="max-w-7xl mx-auto px-4">
+          {/* Optional: Small label above the loop */}
+          <div className="text-center mb-6">
+            <p className="text-sm text-muted-foreground flex items-center justify-center gap-2">
+              <span className="inline-block w-8 h-px bg-primary/30"></span>
+              <span>Built with modern tools</span>
+              <span className="inline-block w-8 h-px bg-primary/30"></span>
+            </p>
+          </div>
+
+          {/* Single Logo Loop */}
+          <div className="relative rounded-2xl bg-background/30 backdrop-blur-sm border border-border/30 p-6">
+            <LogoLoop
+              logos={techLogos}
+              speed={80}
+              direction="left"
+              logoHeight={50}
+              gap={48}
+              pauseOnHover={true}
+              scaleOnHover={true}
+              fadeOut={true}
+              ariaLabel="Technologies used in hackathons"
+              className="py-2"
+            />
+          </div>
+
+          {/* Optional: Small footer note */}
+          <div className="text-center mt-6">
+            <p className="text-xs text-muted-foreground/60">
+              Continuously learning and exploring new technologies
+            </p>
+          </div>
         </div>
       </div>
     </section>
