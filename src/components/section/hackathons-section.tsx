@@ -14,6 +14,8 @@ import { Progress } from "@/components/ui/progress";
 import { useState } from "react";
 import LogoLoop from "../LogoLoop";
 import { SiReact, SiNextdotjs, SiTypescript, SiTailwindcss, SiNodedotjs, SiMongodb, SiPostgresql, SiDocker, SiGit, SiGithub } from 'react-icons/si';
+import PointerHighlightDemo from "../pointer-highlight-demo";
+import { PointerHighlight } from "../ui/pointer-highlight";
 
 export default function HackathonsSection() {
   const totalHackathons = DATA.hackathons.length;
@@ -62,27 +64,34 @@ export default function HackathonsSection() {
               <div className="flex-1 h-px bg-linear-to-l from-transparent from-5% via-primary/50 via-95% to-transparent" />
             </div>
 
-            <div className="flex flex-col gap-y-3 items-center justify-center">
-              <WordRotate
-                words={[
-                  "Learning through building",
-                  "Growing with every challenge",
-                  "Collaboration is key",
-                  "Embracing the journey",
-                ]}
-                className="text-3xl font-bold tracking-tighter sm:text-4xl text-center"
-              />
-              <p className="text-muted-foreground md:text-lg/relaxed lg:text-base/relaxed xl:text-lg/relaxed text-balance text-center max-w-2xl">
-                During my time in university, I participated in{" "}
-                <span className="font-bold text-primary">
-                  <NumberTicker value={totalHackathons} />
-                </span>{" "}
-                hackathons. It was an incredible experience collaborating with
-                talented people from around the country, learning to build
-                solutions under time pressure, and seeing how teamwork can bring
-                ideas to life.
-              </p>
-            </div>
+          <div className="flex flex-col gap-y-3 items-center justify-center">
+  <WordRotate
+    words={[
+      "Learning through building",
+      "Growing with every challenge",
+      "Collaboration is key",
+      "Embracing the journey",
+    ]}
+    className="text-3xl font-bold tracking-tighter sm:text-4xl text-center"
+  />
+  <p className="text-muted-foreground md:text-lg/relaxed lg:text-base/relaxed xl:text-lg/relaxed text-balance text-center max-w-2xl">
+    During my time in university, I participated in{" "}
+    <PointerHighlight
+      rectangleClassName="bg-blue-100 dark:bg-blue-900 border-blue-300 dark:border-blue-700 leading-loose rounded-md px-2 py-0.5"
+      pointerClassName="text-blue-500 h-4 w-4"
+      containerClassName="inline-block mx-0.5"
+    >
+      <span className="relative z-10">
+        <span className="font-bold text-primary">
+          <NumberTicker value={totalHackathons} />
+        </span>{" "}
+        hackathons. It was an incredible experience collaborating with
+        talented people from around the country
+      </span>
+    </PointerHighlight>
+    , learning to build solutions under time pressure, and seeing how teamwork can bring ideas to life.
+  </p>
+</div>
           </div>
 
           <Timeline>

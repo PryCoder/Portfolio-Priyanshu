@@ -52,15 +52,11 @@ export default function Page() {
            <BlurFade delay={BLUR_FADE_DELAY}>
   <div className="text-muted-foreground max-w-[600px] md:text-lg lg:text-xl leading-relaxed">
     <div id="highlight-wrapper" className="inline-block">
-      <PointerHighlight
-        rectangleClassName="bg-blue-100 dark:bg-blue-900/50 border border-blue-300 dark:border-blue-700 rounded-md"
-        pointerClassName="text-blue-500 h-3 w-3"
-        containerClassName="inline-block"
-      >
+      
         <span className="relative z-10">
           {DATA.description}
         </span>
-      </PointerHighlight>
+      
     </div>
   </div>
 </BlurFade>

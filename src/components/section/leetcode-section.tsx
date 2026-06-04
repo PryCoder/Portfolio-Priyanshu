@@ -8,6 +8,7 @@ import { ShimmerButton } from "@/components/ui/shimmer-button";
 import { BorderBeam } from "@/components/ui/border-beam";
 import { Code2, Trophy, Target, Calendar, Flame, AlertCircle } from "lucide-react";
 import Link from "next/link";
+import { PointerHighlight } from "../ui/pointer-highlight";
 
 interface LeetCodeStats {
   totalSolved: number;
@@ -220,18 +221,29 @@ export default function LeetCodeSection() {
           </div>
         )}
 
-        <div className="text-center">
-          <h2 className="text-2xl font-bold tracking-tighter sm:text-3xl md:text-4xl mb-3">
-            Problem Solver
-          </h2>
-          <p className="text-muted-foreground md:text-lg max-w-2xl mx-auto">
-            Passionate about Data Structures & Algorithms. Solved{" "}
-            <span className="font-bold text-primary">
-              <NumberTicker value={stats.totalSolved} />
-            </span>{" "}
-            problems on LeetCode and counting...
-          </p>
-        </div>
+      <div className="text-center">
+  <h2 className="text-2xl font-bold tracking-tighter sm:text-3xl md:text-4xl mb-3">
+    Problem Solver
+  </h2>
+  
+  <div className="text-muted-foreground md:text-lg max-w-2xl mx-auto">
+    Passionate about Data Structures &amp; Algorithms.{" "}
+    <PointerHighlight
+      rectangleClassName="bg-green-100 dark:bg-green-900 border-green-300 dark:border-green-700 leading-loose rounded-md px-1"
+      pointerClassName="text-green-500 h-4 w-4"
+      containerClassName="inline-block mx-0.5"
+    >
+      <span className="relative z-10">
+        Solved{" "}
+        <span className="font-bold text-primary">
+          <NumberTicker value={stats.totalSolved} />
+        </span>{" "}
+        problems
+      </span>
+    </PointerHighlight>{" "}
+    on LeetCode and counting...
+  </div>
+</div>
       </div>
 
       {/* Stats Grid */}
